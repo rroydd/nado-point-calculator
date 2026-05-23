@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  background: #050505;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.08), transparent 25%),
+    radial-gradient(circle at 74% 8%, rgba(52, 211, 153, 0.08), transparent 22%),
+    linear-gradient(180deg, #050505 0%, #090a0d 48%, #050505 100%);
+  color: #f4f4f5;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body::before {
+  display: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+input[type="range"] {
+  accent-color: #34d399;
+}
+
+.nado-code-wave {
+  animation: nado-code-wave 16s ease-in-out infinite alternate;
+}
+
+.nado-code-wave > div {
+  animation: nado-code-row 9s linear infinite;
+}
+
+.nado-code-wave > div:nth-child(2n) {
+  animation-direction: reverse;
+}
+
+.nado-referral-glow {
+  position: relative;
+  background-size: 220% 220%;
+  animation: nado-referral-gradient 4.5s ease-in-out infinite;
+}
+
+.nado-referral-glow::after {
+  position: absolute;
+  inset: -35%;
+  content: "";
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.45) 50%, transparent 65%);
+  transform: translateX(-60%) rotate(8deg);
+  animation: nado-referral-shine 3.6s ease-in-out infinite;
+}
+
+.nado-referral-glow > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes nado-code-wave {
+  from {
+    transform: translate3d(-4%, -3%, 0) rotate(-8deg) scale(1.04);
+  }
+
+  to {
+    transform: translate3d(4%, 3%, 0) rotate(-4deg) scale(1.1);
+  }
+}
+
+@keyframes nado-code-row {
+  from {
+    transform: translateX(-8%);
+  }
+
+  to {
+    transform: translateX(8%);
+  }
+}
+
+@keyframes nado-referral-gradient {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes nado-referral-shine {
+  0%,
+  52% {
+    opacity: 0;
+    transform: translateX(-60%) rotate(8deg);
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(60%) rotate(8deg);
+  }
+}
