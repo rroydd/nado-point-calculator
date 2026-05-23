@@ -1,5 +1,5 @@
 {
-  "name": "nado-airdrop-calculator",
+  "name": "nado-point-calculator",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -27,3 +27,4 @@
     "typescript": "latest"
   }
 }
+

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Home from "./ClientHome";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nado-airdrop-calculator.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nado-point-calculator.vercel.app";
 const siteName = "Nado Point Calculator";
 const siteDescription =
   "Estimate a potential Nado and INK airdrop with live weekly points pool data, wallet activity checks, FDV assumptions, token allocation, and Templars NFT scenarios.";
@@ -132,3 +132,4 @@ export default function Page() {
     </>
   );
 }
+

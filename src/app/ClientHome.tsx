@@ -21,7 +21,7 @@ const MAX_NFT_MULTIPLIER = 5;
 const MAX_AVG_DAILY_VOLUME_USD = 5_000_000_000;
 
 const REFERRAL_LINK = "https://app.nado.xyz?join=oIxX08E";
-const PUBLIC_SITE_URL = "https://nado-airdrop-calculator.vercel.app/";
+const PUBLIC_SITE_URL = "https://nado-point-calculator.vercel.app/";
 const X_LINK = "https://x.com/nadoHQ";
 const DOCS_LINK = "https://docs.nado.xyz/";
 const NFT_DOCS_LINK = "https://docs.nado.xyz/nft-templars-of-the-storm";
@@ -367,7 +367,7 @@ Calculate yours: ${REFERRAL_LINK}`;
 
   const shareText = `My estimated Nado airdrop: ${usd.format(result.estimatedAirdropUsd)}
 
-${numberWithCommas.format(result.effectivePoints)} effective points · calculated with Nado Airdrop Calculator`;
+${numberWithCommas.format(result.effectivePoints)} effective points В· calculated with Nado Point Calculator`;
   const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(publicShareUrl.toString())}`;
 
   async function copyResult() {
@@ -833,3 +833,4 @@ ${numberWithCommas.format(result.effectivePoints)} effective points · calculate
     </main>
   );
 }
+
