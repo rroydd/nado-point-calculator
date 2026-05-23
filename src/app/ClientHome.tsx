@@ -483,7 +483,7 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
 
         <section className="mb-7 grid gap-6 lg:grid-cols-[1fr_0.95fr] lg:items-start">
           <div>
-            <p className="text-sm font-semibold text-zinc-400">Nado airdrop and points estimator</p>
+            <p className="text-sm font-semibold text-zinc-400">Nado airdrop and points estimator / checker</p>
             <h1 className="mt-3 text-4xl font-semibold tracking-normal text-white sm:text-5xl">Nado Point Calculator</h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
               Estimate speculative $INK rewards from Nado points, FDV, token allocation, wallet activity checks, trading challenge data, and Templars NFT scenarios.
