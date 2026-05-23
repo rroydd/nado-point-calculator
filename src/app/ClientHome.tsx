@@ -827,10 +827,11 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
           <MetricCard label="Dynamic Pool" value={`${compactNumber.format(MIN_WEEKLY_POINTS_POOL)}-${compactNumber.format(MAX_WEEKLY_POINTS_POOL)}`} helper="based on 7D average daily volume" />
           <MetricCard label="Points Sources" value="Trading / NLP / Referrals" helper="from official docs" />
           <a
-            className="nado-referral-glow min-h-32 overflow-hidden rounded-lg border border-emerald-200/35 bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-200 p-4 text-black shadow-xl shadow-emerald-950/30 transition hover:-translate-y-0.5 hover:shadow-emerald-700/30 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            className="nado-referral-glow block min-h-32 cursor-pointer overflow-hidden rounded-lg border border-emerald-200/35 bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-200 p-4 text-black shadow-xl shadow-emerald-950/30 transition hover:-translate-y-0.5 hover:shadow-emerald-700/30 focus:outline-none focus:ring-2 focus:ring-emerald-200"
             href={REFERRAL_LINK}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Open Nado trading competition with referral link"
           >
             <p className="border-b border-dashed border-black/25 pb-1 text-xs font-black uppercase text-emerald-950/70">$100K Trading Competition</p>
             <p className="mt-3 text-2xl font-black leading-tight text-black">May 25-Jun 1</p>
