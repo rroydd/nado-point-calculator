@@ -284,8 +284,8 @@ export default function Home() {
   const [addressInput, setAddressInput] = useState("");
   const [addressStatus, setAddressStatus] = useState("idle");
   const [addressResult, setAddressResult] = useState<AddressCheckResult | null>(null);
-  const [nextSnapshotAt, setNextSnapshotAt] = useState("2026-05-29T00:00:00.000Z");
-  const [snapshotCountdown, setSnapshotCountdown] = useState(() => formatCountdown("2026-05-29T00:00:00.000Z"));
+  const [nextSnapshotAt, setNextSnapshotAt] = useState("2026-05-29T01:00:00.000Z");
+  const [snapshotCountdown, setSnapshotCountdown] = useState(() => formatCountdown("2026-05-29T01:00:00.000Z"));
 
   useEffect(() => {
     let active = true;
@@ -367,7 +367,7 @@ Calculate yours: ${REFERRAL_LINK}`;
 
   const shareText = `My estimated Nado airdrop: ${usd.format(result.estimatedAirdropUsd)}
 
-${numberWithCommas.format(result.effectivePoints)} effective points В· calculated with Nado Point Calculator`;
+${numberWithCommas.format(result.effectivePoints)} effective points | calculated with Nado Point Calculator`;
   const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(publicShareUrl.toString())}`;
 
   async function copyResult() {
@@ -391,7 +391,34 @@ ${numberWithCommas.format(result.effectivePoints)} effective points В· calcula
         throw new Error("Canvas is not supported");
       }
 
-      ctx.fillStyle = "#050505";
+      const drawFitText = (text: string, x: number, y: number, maxWidth: number, baseSize: number, weight = 800, color = "#ffffff") => {
+        let size = baseSize;
+        ctx.fillStyle = color;
+        do {
+          ctx.font = `${weight} ${size}px Arial`;
+          size -= 2;
+        } while (ctx.measureText(text).width > maxWidth && size > 22);
+        ctx.fillText(text, x, y);
+      };
+
+      const drawStatCard = (label: string, value: string, x: number, width: number) => {
+        ctx.fillStyle = "rgba(255,255,255,0.055)";
+        ctx.roundRect(x, 384, width, 104, 16);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.10)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "700 19px Arial";
+        ctx.fillText(label.toUpperCase(), x + 24, 420);
+        drawFitText(value, x + 24, 462, width - 48, 32, 900, "#f8fafc");
+      };
+
+      const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      bgGradient.addColorStop(0, "#020403");
+      bgGradient.addColorStop(0.58, "#050505");
+      bgGradient.addColorStop(1, "#041f1a");
+      ctx.fillStyle = bgGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "rgba(255,255,255,0.08)";
       for (let x = 0; x < canvas.width; x += 18) {
@@ -402,44 +429,54 @@ ${numberWithCommas.format(result.effectivePoints)} effective points В· calcula
         }
       }
 
+      const glow = ctx.createRadialGradient(950, 120, 60, 950, 120, 560);
+      glow.addColorStop(0, "rgba(52,211,153,0.24)");
+      glow.addColorStop(1, "rgba(52,211,153,0)");
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       ctx.fillStyle = "#15161b";
-      ctx.roundRect(78, 70, 1044, 535, 18);
+      ctx.roundRect(76, 58, 1048, 558, 24);
       ctx.fill();
       ctx.strokeStyle = "rgba(255,255,255,0.14)";
       ctx.lineWidth = 2;
       ctx.stroke();
 
+      ctx.fillStyle = "rgba(52,211,153,0.16)";
+      ctx.roundRect(112, 104, 205, 34, 17);
+      ctx.fill();
+      ctx.fillStyle = "#86efac";
+      ctx.font = "800 16px Arial";
+      ctx.fillText("NADO POINT ESTIMATE", 130, 127);
+
       ctx.fillStyle = "#fff";
       ctx.font = "900 54px Arial";
-      ctx.fillText("NADO", 112, 145);
+      ctx.fillText("NADO", 112, 198);
       ctx.fillStyle = "#9ca3af";
-      ctx.font = "700 28px Arial";
-      ctx.fillText("Point Calculator", 112, 195);
+      ctx.font = "700 26px Arial";
+      ctx.fillText("Point Calculator", 112, 238);
 
-      ctx.fillStyle = "#ffffff";
-      ctx.font = `${result.estimatedAirdropUsd >= 100_000 ? "800 70px" : "800 80px"} Arial`;
-      ctx.fillText(usd.format(result.estimatedAirdropUsd), 112, 315);
+      drawFitText(usd.format(result.estimatedAirdropUsd), 112, 315, 600, result.estimatedAirdropUsd >= 100_000 ? 70 : 80, 900);
       ctx.fillStyle = "#a1a1aa";
-      ctx.font = "600 28px Arial";
-      ctx.fillText("Final estimated points value", 112, 360);
+      ctx.font = "600 25px Arial";
+      ctx.fillText("Potential estimated value", 112, 352);
 
-      const stats = [
-        `${numberWithCommas.format(result.effectivePoints)} points`,
-        nftEnabled ? nftScenario : "No Templar",
-        `${compactNumber.format(result.estimatedTokens)} $INK`,
-      ];
-      ctx.fillStyle = "#23252b";
-      ctx.roundRect(112, 420, 976, 96, 14);
+      drawStatCard("Points", numberWithCommas.format(result.effectivePoints), 112, 300);
+      drawStatCard("$INK Tokens", preciseNumber.format(result.estimatedTokens), 450, 300);
+      drawStatCard("NFT Scenario", nftEnabled ? nftScenario : "No Templar", 788, 300);
+
+      const footerGradient = ctx.createLinearGradient(112, 510, 1088, 510);
+      footerGradient.addColorStop(0, "#34d399");
+      footerGradient.addColorStop(0.55, "#67e8f9");
+      footerGradient.addColorStop(1, "#a7f3d0");
+      ctx.fillStyle = footerGradient;
+      ctx.roundRect(112, 518, 976, 64, 18);
       ctx.fill();
-      ctx.fillStyle = "#d4d4d8";
-      ctx.font = "800 30px Arial";
-      stats.forEach((item, index) => {
-        ctx.fillText(item, 140 + index * 315, 480);
-      });
-
-      ctx.fillStyle = "#34d399";
-      ctx.font = "800 26px Arial";
-      ctx.fillText("Trade on Nado with referral code oIxX08E", 112, 585);
+      ctx.fillStyle = "#04130f";
+      ctx.font = "900 26px Arial";
+      ctx.fillText("Create your account on Nado", 142, 558);
+      ctx.font = "800 22px Arial";
+      ctx.fillText("referral code oIxX08E", 760, 557);
 
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
       if (!blob) {
@@ -536,7 +573,7 @@ ${numberWithCommas.format(result.effectivePoints)} effective points В· calcula
             <MetricCard label="Published Points" value={compactNumber.format(CURRENT_PUBLISHED_POINTS)} helper="from Nado Season 2 update" />
             <MetricCard label="7D Avg Volume" value={usdCompact.format(avgDailyVolumeUsd)} helper="live archive metric" />
             <MetricCard label="Weekly Pool" value={compactNumber.format(weeklyPointsPool)} helper={metricsStatus} />
-            <MetricCard label="Next Snapshot" value={snapshotCountdown} helper="Friday 00:00 UTC" />
+            <MetricCard label="Next Snapshot" value={snapshotCountdown} helper="Friday 01:00 UTC" />
           </div>
         </section>
 
@@ -789,11 +826,16 @@ ${numberWithCommas.format(result.effectivePoints)} effective points В· calcula
         <section className="mt-6 grid gap-4 lg:grid-cols-3">
           <MetricCard label="Dynamic Pool" value={`${compactNumber.format(MIN_WEEKLY_POINTS_POOL)}-${compactNumber.format(MAX_WEEKLY_POINTS_POOL)}`} helper="based on 7D average daily volume" />
           <MetricCard label="Points Sources" value="Trading / NLP / Referrals" helper="from official docs" />
-          <div className="nado-referral-glow min-h-32 overflow-hidden rounded-lg border border-emerald-200/35 bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-200 p-4 text-black shadow-xl shadow-emerald-950/30">
+          <a
+            className="nado-referral-glow min-h-32 overflow-hidden rounded-lg border border-emerald-200/35 bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-200 p-4 text-black shadow-xl shadow-emerald-950/30 transition hover:-translate-y-0.5 hover:shadow-emerald-700/30 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            href={REFERRAL_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <p className="border-b border-dashed border-black/25 pb-1 text-xs font-black uppercase text-emerald-950/70">$100K Trading Competition</p>
             <p className="mt-3 text-2xl font-black leading-tight text-black">May 25-Jun 1</p>
             <p className="mt-2 text-xs font-bold text-black/65">ROI and volume leaderboards</p>
-          </div>
+          </a>
         </section>
 
         <section className="mt-6 rounded-lg border border-white/10 bg-[#15161b]/90 p-5 shadow-2xl shadow-black/20 sm:p-6">

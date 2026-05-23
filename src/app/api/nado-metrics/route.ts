@@ -37,7 +37,7 @@ function calculateWeeklyPointsPool(avgDailyVolumeUsd: number) {
 function getNextSnapshotAt(now = new Date()) {
   const day = now.getUTCDay();
   const daysUntilFriday = (5 - day + 7) % 7;
-  const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilFriday, 0, 0, 0));
+  const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilFriday, 1, 0, 0));
 
   if (next.getTime() <= now.getTime()) {
     next.setUTCDate(next.getUTCDate() + 7);
