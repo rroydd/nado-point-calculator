@@ -359,11 +359,14 @@ Estimated value: ${usd.format(result.estimatedAirdropUsd)}
 Estimated tokens: ${preciseNumber.format(result.estimatedTokens)} $INK
 Calculate yours: ${REFERRAL_LINK}`;
 
+  const shareParams = new URLSearchParams({
+    amount: usd.format(result.estimatedAirdropUsd),
+    points: `${numberWithCommas.format(result.effectivePoints)} points`,
+    tokens: `${compactNumber.format(result.estimatedTokens)} $INK`,
+    nft: nftEnabled ? nftScenario : "No Templar",
+  });
   const publicShareUrl = new URL(PUBLIC_SITE_URL);
-  publicShareUrl.searchParams.set("amount", usd.format(result.estimatedAirdropUsd));
-  publicShareUrl.searchParams.set("points", `${numberWithCommas.format(result.effectivePoints)} points`);
-  publicShareUrl.searchParams.set("tokens", `${compactNumber.format(result.estimatedTokens)} $INK`);
-  publicShareUrl.searchParams.set("nft", nftEnabled ? nftScenario : "No Templar");
+  publicShareUrl.search = shareParams.toString();
 
   const shareText = `My estimated Nado airdrop: ${usd.format(result.estimatedAirdropUsd)}
 
@@ -383,122 +386,39 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
 
   async function copyResultImage() {
     try {
-      const canvas = document.createElement("canvas");
-      canvas.width = 1200;
-      canvas.height = 675;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        throw new Error("Canvas is not supported");
+      const imageUrl = new URL("/share-image", window.location.origin);
+      imageUrl.search = shareParams.toString();
+      const response = await fetch(imageUrl.toString(), { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error("Image request failed");
       }
+      const blob = await response.blob();
 
-      const drawFitText = (text: string, x: number, y: number, maxWidth: number, baseSize: number, weight = 800, color = "#ffffff") => {
-        let size = baseSize;
-        ctx.fillStyle = color;
-        do {
-          ctx.font = `${weight} ${size}px Arial`;
-          size -= 2;
-        } while (ctx.measureText(text).width > maxWidth && size > 22);
-        ctx.fillText(text, x, y);
-      };
-
-      const drawStatCard = (label: string, value: string, x: number, width: number) => {
-        ctx.fillStyle = "rgba(255,255,255,0.055)";
-        ctx.roundRect(x, 384, width, 104, 16);
-        ctx.fill();
-        ctx.strokeStyle = "rgba(255,255,255,0.10)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.fillStyle = "#94a3b8";
-        ctx.font = "700 19px Arial";
-        ctx.fillText(label.toUpperCase(), x + 24, 420);
-        drawFitText(value, x + 24, 462, width - 48, 32, 900, "#f8fafc");
-      };
-
-      const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      bgGradient.addColorStop(0, "#020403");
-      bgGradient.addColorStop(0.58, "#050505");
-      bgGradient.addColorStop(1, "#041f1a");
-      ctx.fillStyle = bgGradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(255,255,255,0.08)";
-      for (let x = 0; x < canvas.width; x += 18) {
-        for (let y = 0; y < canvas.height; y += 18) {
-          if ((x * y) % 7 === 0) {
-            ctx.fillRect(x, y, 3, 3);
-          }
-        }
-      }
-
-      const glow = ctx.createRadialGradient(950, 120, 60, 950, 120, 560);
-      glow.addColorStop(0, "rgba(52,211,153,0.24)");
-      glow.addColorStop(1, "rgba(52,211,153,0)");
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "#15161b";
-      ctx.roundRect(76, 58, 1048, 558, 24);
-      ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,0.14)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      ctx.fillStyle = "rgba(52,211,153,0.16)";
-      ctx.roundRect(112, 104, 205, 34, 17);
-      ctx.fill();
-      ctx.fillStyle = "#86efac";
-      ctx.font = "800 16px Arial";
-      ctx.fillText("NADO POINT ESTIMATE", 130, 127);
-
-      ctx.fillStyle = "#fff";
-      ctx.font = "900 54px Arial";
-      ctx.fillText("NADO", 112, 198);
-      ctx.fillStyle = "#9ca3af";
-      ctx.font = "700 26px Arial";
-      ctx.fillText("Point Calculator", 112, 238);
-
-      drawFitText(usd.format(result.estimatedAirdropUsd), 112, 315, 600, result.estimatedAirdropUsd >= 100_000 ? 70 : 80, 900);
-      ctx.fillStyle = "#a1a1aa";
-      ctx.font = "600 25px Arial";
-      ctx.fillText("Potential estimated value", 112, 352);
-
-      drawStatCard("Points", numberWithCommas.format(result.effectivePoints), 112, 300);
-      drawStatCard("$INK Tokens", preciseNumber.format(result.estimatedTokens), 450, 300);
-      drawStatCard("NFT Scenario", nftEnabled ? nftScenario : "No Templar", 788, 300);
-
-      const footerGradient = ctx.createLinearGradient(112, 510, 1088, 510);
-      footerGradient.addColorStop(0, "#34d399");
-      footerGradient.addColorStop(0.55, "#67e8f9");
-      footerGradient.addColorStop(1, "#a7f3d0");
-      ctx.fillStyle = footerGradient;
-      ctx.roundRect(112, 518, 976, 64, 18);
-      ctx.fill();
-      ctx.fillStyle = "#04130f";
-      ctx.font = "900 26px Arial";
-      ctx.fillText("Create your account on Nado", 142, 558);
-      ctx.font = "800 22px Arial";
-      ctx.fillText("referral code oIxX08E", 760, 557);
-
-      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
-      if (!blob) {
-        throw new Error("Image export is not supported");
-      }
-
-      if (!navigator.clipboard || typeof ClipboardItem === "undefined") {
+      const downloadImage = () => {
         const downloadUrl = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = downloadUrl;
-        link.download = "nado-airdrop-estimate.png";
+        link.download = "nado-point-estimate.png";
         document.body.appendChild(link);
         link.click();
         link.remove();
         URL.revokeObjectURL(downloadUrl);
+      };
+
+      if (!navigator.clipboard || typeof ClipboardItem === "undefined") {
+        downloadImage();
         setImageStatus("Image downloaded");
         window.setTimeout(() => setImageStatus("Copy Image"), 1800);
         return;
       }
 
-      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-      setImageStatus("Image copied");
+      try {
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        setImageStatus("Image copied");
+      } catch {
+        downloadImage();
+        setImageStatus("Image downloaded");
+      }
       window.setTimeout(() => setImageStatus("Copy Image"), 1800);
     } catch {
       setImageStatus("Copy failed");
@@ -563,10 +483,10 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
 
         <section className="mb-7 grid gap-6 lg:grid-cols-[1fr_0.95fr] lg:items-start">
           <div>
-            <p className="text-sm font-semibold text-zinc-400">Nado points estimator</p>
-            <h1 className="mt-3 text-4xl font-semibold tracking-normal text-white sm:text-5xl">Referral Dashboard</h1>
+            <p className="text-sm font-semibold text-zinc-400">Nado airdrop and points estimator</p>
+            <h1 className="mt-3 text-4xl font-semibold tracking-normal text-white sm:text-5xl">Nado Point Calculator</h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
-              Estimate speculative $INK rewards from Nado points, FDV, token allocation, real address activity, and Templars NFT scenarios.
+              Estimate speculative $INK rewards from Nado points, FDV, token allocation, wallet activity checks, trading challenge data, and Templars NFT scenarios.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

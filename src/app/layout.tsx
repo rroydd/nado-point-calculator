@@ -5,13 +5,13 @@ import "./globals.css";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nado-point-calculator.vercel.app";
 const siteName = "Nado Point Calculator";
 const siteDescription =
-  "Estimate a potential Nado and INK airdrop with live weekly points pool data, wallet activity checks, FDV assumptions, token allocation, and Templars NFT scenarios.";
+  "Use the Nado Point Calculator to estimate speculative $INK airdrop value from Nado points, live weekly pool data, wallet checks, FDV, allocation, and Templars NFT scenarios.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: siteName,
   title: {
-    default: "Nado Point Calculator | Wallet Checker & Templars NFT Estimator",
+    default: "Nado Point Calculator | Airdrop, Wallet Checker & Templars NFT Estimator",
     template: `%s | ${siteName}`,
   },
   description: siteDescription,
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName,
-    title: "Nado Point Calculator | Wallet Checker & Templars NFT Estimator",
+    title: "Nado Point Calculator | Airdrop, Wallet Checker & Templars NFT Estimator",
     description: siteDescription,
     images: [
       {
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@nadoHQ",
     creator: "@brelgino",
-    title: "Nado Point Calculator | Wallet Checker & Templars NFT Estimator",
+    title: "Nado Point Calculator | Airdrop, Wallet Checker & Templars NFT Estimator",
     description: siteDescription,
     images: ["/share-image"],
   },

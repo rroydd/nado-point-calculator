@@ -4,7 +4,7 @@ import Home from "./ClientHome";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nado-point-calculator.vercel.app";
 const siteName = "Nado Point Calculator";
 const siteDescription =
-  "Estimate a potential Nado and INK airdrop with live weekly points pool data, wallet activity checks, FDV assumptions, token allocation, and Templars NFT scenarios.";
+  "Use the Nado Point Calculator to estimate speculative $INK airdrop value from Nado points, live weekly pool data, wallet checks, FDV, allocation, and Templars NFT scenarios.";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -66,7 +66,7 @@ export async function generateMetadata({
   const sharePageUrl = buildSharePageUrl(params);
   const amount = safeValue(params.amount);
   const points = safeValue(params.points);
-  const title = amount ? `My Nado airdrop estimate: ${amount}` : "Nado Point Calculator | Wallet Checker & Templars NFT Estimator";
+  const title = amount ? `My Nado airdrop estimate: ${amount}` : "Nado Point Calculator | Airdrop, Wallet Checker & Templars NFT Estimator";
   const description =
     amount && points
       ? `${points} calculated with ${siteName}.`
