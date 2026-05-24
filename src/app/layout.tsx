@@ -5,26 +5,25 @@ import "./globals.css";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nado-point-calculator.vercel.app";
 const siteName = "Nado Point Calculator";
 const siteDescription =
-  "Use the Nado Point Calculator to estimate speculative $INK airdrop value from Nado points, live weekly pool data, wallet checks, FDV, allocation, and Templars NFT scenarios.";
+  "Use the Nado Point Calculator to estimate speculative $INK value from Nado points, live weekly pool data, wallet checks, FDV, allocation, and Templars NFT scenarios.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: siteName,
   title: {
-    default: "Nado Point Calculator | Airdrop, Wallet Checker & Templars NFT Estimator",
+    default: "Nado Point Calculator | Points, Wallet Checker & Templars NFT Estimator",
     template: `%s | ${siteName}`,
   },
   description: siteDescription,
   keywords: [
-    "Nado airdrop calculator",
+    "Nado point calculator",
     "Nado points",
     "Nado wallet checker",
     "Nado fee tier",
     "Nado Templars NFT",
-    "INK airdrop",
     "INK points calculator",
-    "crypto airdrop calculator",
-    "airdrop estimator",
+    "crypto points calculator",
+    "points value estimator",
     "trading challenge calculator",
   ],
   authors: [{ name: "Brelgino", url: "https://x.com/brelgino" }],
@@ -37,7 +36,7 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName,
-    title: "Nado Point Calculator | Airdrop, Wallet Checker & Templars NFT Estimator",
+    title: "Nado Point Calculator | Points, Wallet Checker & Templars NFT Estimator",
     description: siteDescription,
     images: [
       {
@@ -52,7 +51,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@nadoHQ",
     creator: "@brelgino",
-    title: "Nado Point Calculator | Airdrop, Wallet Checker & Templars NFT Estimator",
+    title: "Nado Point Calculator | Points, Wallet Checker & Templars NFT Estimator",
     description: siteDescription,
     images: ["/share-image"],
   },

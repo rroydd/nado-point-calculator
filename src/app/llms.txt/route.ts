@@ -4,7 +4,7 @@ export function GET() {
   return new Response(
     `# Nado Point Calculator
 
-Nado Point Calculator is a public, free, client-side calculator for estimating speculative Nado and $INK airdrop outcomes.
+Nado Point Calculator is a public, free, client-side calculator for estimating speculative Nado points and $INK value scenarios.
 
 Primary URL: ${siteUrl}
 
@@ -22,7 +22,7 @@ What the app does:
 - Generates share text and share images for X/Twitter from the user's current calculator inputs.
 
 Important disclaimer:
-This is an independent speculative tool. It is not official Nado or Ink tokenomics, financial advice, or a promise of an airdrop.
+This is an independent speculative tool. It is not official Nado or Ink tokenomics, financial advice, or a promise of future rewards.
 `,
     {
       headers: {

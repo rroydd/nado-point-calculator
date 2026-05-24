@@ -21,6 +21,7 @@ const MAX_NFT_MULTIPLIER = 5;
 const MAX_AVG_DAILY_VOLUME_USD = 5_000_000_000;
 const SHARE_BACKGROUND_COUNT = 48;
 
+const PORTAL_URL = process.env.NEXT_PUBLIC_PORTAL_URL || "https://alpha-tools-tau.vercel.app/";
 const REFERRAL_LINK = "https://app.nado.xyz?join=oIxX08E";
 const PUBLIC_SITE_URL = "https://nado-point-calculator.vercel.app/";
 const X_LINK = "https://x.com/nadoHQ";
@@ -356,7 +357,7 @@ export default function Home() {
   const roiPercent = activeCost > 0 ? (netProfit / activeCost) * 100 : 0;
   const breakEvenPoints = result.pointValueUsd > 0 && activeCost > 0 ? activeCost / result.pointValueUsd : 0;
 
-  const resultSummary = `Nado airdrop scenario
+  const resultSummary = `Nado points scenario
 Eligible points: ${numberWithCommas.format(result.eligiblePoints)}
 Effective points: ${numberWithCommas.format(result.effectivePoints)}
 NFT scenario: ${nftEnabled ? nftScenario : "Off"}
@@ -364,7 +365,7 @@ Estimated value: ${usd.format(result.estimatedAirdropUsd)}
 Estimated tokens: ${preciseNumber.format(result.estimatedTokens)} $INK
 Calculate yours: ${REFERRAL_LINK}`;
 
-  const shareText = `My estimated Nado airdrop: ${usd.format(result.estimatedAirdropUsd)}
+  const shareText = `My estimated Nado points value: ${usd.format(result.estimatedAirdropUsd)}
 
 ${numberWithCommas.format(result.effectivePoints)} effective points | calculated with Nado Point Calculator`;
 
@@ -471,6 +472,9 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
               <span className="hidden text-sm font-semibold text-zinc-400 sm:inline">Point Calculator</span>
             </div>
             <nav className="flex items-center gap-2 text-sm font-semibold text-zinc-400">
+              <a className="rounded-md border border-white/10 px-3 py-2 text-zinc-200 hover:bg-white/5 hover:text-white" href={PORTAL_URL}>
+                Back to Alpha Tools
+              </a>
               <a className="rounded-md px-3 py-2 hover:bg-white/5 hover:text-white" href={X_LINK} target="_blank" rel="noopener noreferrer">
                 X
               </a>
@@ -486,7 +490,7 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
 
         <section className="mb-7 grid gap-6 lg:grid-cols-[1fr_0.95fr] lg:items-start">
           <div>
-            <p className="text-sm font-semibold text-zinc-400">Nado airdrop and points estimator / checker</p>
+            <p className="text-sm font-semibold text-zinc-400">Nado points estimator, wallet checker, and $INK scenario calculator</p>
             <h1 className="mt-3 text-4xl font-semibold tracking-normal text-white sm:text-5xl">Nado Point Calculator</h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
               Estimate speculative $INK rewards from Nado points, FDV, token allocation, wallet activity checks, trading challenge data, and Templars NFT scenarios.
@@ -796,7 +800,7 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
           </p>
           <p className="mx-auto mt-3 max-w-4xl text-xs leading-5 text-zinc-600">
             Disclaimer: this calculator is an independent speculative tool. It is not official Nado or Ink tokenomics,
-            financial advice, or a promise of an airdrop. All calculations, NFT multipliers, FDV, allocation percentages,
+            financial advice, or a promise of future rewards. All calculations, NFT multipliers, FDV, allocation percentages,
             and token estimates are hypothetical.
           </p>
         </footer>
