@@ -405,20 +405,8 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
       }
       const blob = await response.blob();
 
-      const downloadImage = () => {
-        const downloadUrl = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = downloadUrl;
-        link.download = "nado-point-estimate.png";
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        URL.revokeObjectURL(downloadUrl);
-      };
-
       if (!navigator.clipboard || typeof ClipboardItem === "undefined") {
-        downloadImage();
-        setImageStatus("Image downloaded");
+        setImageStatus("Copy unsupported");
         window.setTimeout(() => setImageStatus("Copy Image"), 1800);
         return;
       }
@@ -427,8 +415,7 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
         await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
         setImageStatus("Image copied");
       } catch {
-        downloadImage();
-        setImageStatus("Image downloaded");
+        setImageStatus("Copy failed");
       }
       window.setTimeout(() => setImageStatus("Copy Image"), 1800);
     } catch {
