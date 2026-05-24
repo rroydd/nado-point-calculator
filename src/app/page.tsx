@@ -21,6 +21,7 @@ function buildImageUrl(searchParams: SearchParams) {
   const points = safeValue(searchParams.points);
   const tokens = safeValue(searchParams.tokens);
   const nft = safeValue(searchParams.nft);
+  const bg = safeValue(searchParams.bg, 8);
 
   if (!amount || !points || !tokens) {
     return `${siteUrl}/share-image`;
@@ -31,6 +32,7 @@ function buildImageUrl(searchParams: SearchParams) {
     points,
     tokens,
     nft: nft || "No NFT",
+    bg: bg || "0",
   });
 
   return `${siteUrl}/share-image?${params.toString()}`;
@@ -41,6 +43,7 @@ function buildSharePageUrl(searchParams: SearchParams) {
   const points = safeValue(searchParams.points);
   const tokens = safeValue(searchParams.tokens);
   const nft = safeValue(searchParams.nft);
+  const bg = safeValue(searchParams.bg, 8);
 
   if (!amount || !points || !tokens) {
     return siteUrl;
@@ -51,6 +54,7 @@ function buildSharePageUrl(searchParams: SearchParams) {
     points,
     tokens,
     nft: nft || "No NFT",
+    bg: bg || "0",
   });
 
   return `${siteUrl}/?${params.toString()}`;

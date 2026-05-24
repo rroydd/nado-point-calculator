@@ -3,8 +3,65 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 
+const SHARE_BACKGROUNDS = [
+  "anime-anime-girls-one-piece-nico-robin-wallpaper-preview.jpg",
+  "anime-one-piece-blackbeard-marshall-d-teach-wallpaper-preview.jpg",
+  "anime-one-piece-brook-one-piece-franky-one-piece-wallpaper-preview (1).jpg",
+  "anime-one-piece-brook-one-piece-franky-one-piece-wallpaper-preview.jpg",
+  "anime-one-piece-brook-one-piece-minimalist-wallpaper-preview.jpg",
+  "anime-one-piece-gol-d-roger-wallpaper-preview.jpg",
+  "anime-one-piece-monkey-d-luffy-portgas-d-ace-wallpaper-preview.jpg",
+  "anime-one-piece-monkey-d-luffy-shanks-one-piece-wallpaper-preview.jpg",
+  "anime-one-piece-monkey-d-luffy-wallpaper-preview (1).jpg",
+  "anime-one-piece-monkey-d-luffy-wallpaper-preview.jpg",
+  "anime-one-piece-monkey-d-luffy-zoro-roronoa-wallpaper-preview.jpg",
+  "anime-one-piece-portgas-d-ace-wallpaper-preview.jpg",
+  "anime-one-piece-sanji-one-piece-wallpaper-preview.jpg",
+  "anime-one-piece-skull-skull-and-bones-wallpaper-preview.jpg",
+  "anime-one-piece-thousand-sunny-wallpaper-preview.jpg",
+  "anime-one-piece-tony-tony-chopper-wallpaper-preview.jpg",
+  "anime-one-piece-wallpaper-preview.jpg",
+  "anime-one-piece-wallpaper-thumb.jpg",
+  "anime-one-piece-zoro-roronoa-wallpaper-preview.jpg",
+  "blue-one-piece-kids-children-hands-sad-luffy-crying-straw-hat-1920x1080-anime-one-piece-hd-art-wallpaper-preview.jpg",
+  "boa-hancock-shichibukai-blue-eyes-black-hair-anime-girls-hd-wallpaper-preview.jpg",
+  "monkey-d-luffy-one-piece-gear-5th-hd-wallpaper-preview.jpg",
+  "one-piece-1024x768-anime-one-piece-hd-art-wallpaper-preview.jpg",
+  "one-piece-anime-monkey-d-luffy-wallpaper-preview.jpg",
+  "one-piece-anime-nico-robin-wallpaper-thumb.jpg",
+  "one-piece-anime-wallpaper-preview.jpg",
+  "one-piece-buggy-one-piece-shanks-one-piece-hd-wallpaper-preview.jpg",
+  "one-piece-edward-newgate-gol-d-roger-hd-wallpaper-preview.jpg",
+  "one-piece-edward-newgate-gol-d-roger-kozuki-oden-hd-wallpaper-preview.jpg",
+  "one-piece-monkey-d-luffy-1920x1080-anime-one-piece-hd-art-wallpaper-preview.jpg",
+  "one-piece-monkey-d-luffy-anime-boys-anime-wallpaper-preview.jpg",
+  "one-piece-monkey-d-luffy-gear-fourth-snakeman-wallpaper-preview.jpg",
+  "one-piece-monkey-d-luffy-hd-wallpaper-preview.jpg",
+  "one-piece-monkey-d-luffy-portgas-d-ace-sea-wallpaper-preview.jpg",
+  "one-piece-nakamas-anime-monkey-d-luffy-wallpaper-preview.jpg",
+  "one-piece-nami-1024x768-anime-one-piece-hd-art-wallpaper-preview.jpg",
+  "one-piece-nami-1716x1176-anime-one-piece-hd-art-wallpaper-preview.jpg",
+  "one-piece-nami-one-piece-hd-wallpaper-preview.jpg",
+  "one-piece-nico-robin-nami-luffy-chopper-brook-franky-usopp-mugiwara-1500x843-anime-one-piece-hd-art-wallpaper-preview.jpg",
+  "one-piece-nico-robin-roronoa-zoro-anime-wallpaper-preview.jpg",
+  "one-piece-portgas-d-ace-anime-wallpaper-preview.jpg",
+  "one-piece-roronoa-zoro-swordsman-sword-katana-hd-wallpaper-preview.jpg",
+  "one-piece-roronoa-zoro-tony-tony-chopper-usopp-wallpaper-preview.jpg",
+  "one-piece-shanks-one-piece-hd-wallpaper-preview.jpg",
+  "one-piece-wallpaper-preview.jpg",
+  "one-piece-zoro-1920x1080-anime-one-piece-hd-art-wallpaper-preview.jpg",
+  "roronoa-zoro-one-piece-hd-wallpaper-preview.jpg",
+  "yamato-one-piece-bunny-girl-hd-wallpaper-preview.jpg",
+];
+
 function safeText(value: string | null, fallback: string, maxLength = 54) {
   return value && value.trim() ? value.trim().slice(0, maxLength) : fallback;
+}
+
+function shareBackgroundUrl(request: Request, value: string | null) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  const index = Number.isFinite(parsed) ? Math.abs(parsed) % SHARE_BACKGROUNDS.length : Math.floor(Math.random() * SHARE_BACKGROUNDS.length);
+  return new URL(`/share-backgrounds/${encodeURIComponent(SHARE_BACKGROUNDS[index])}`, request.url).toString();
 }
 
 function StatCard({ label, value }: { label: string; value: string }) {
@@ -43,6 +100,7 @@ export function GET(request: Request) {
   const points = safeText(searchParams.get("points"), "0 points", 28);
   const nft = safeText(searchParams.get("nft"), "No Templar", 32);
   const tokens = safeText(searchParams.get("tokens"), "0 $INK", 28);
+  const backgroundUrl = shareBackgroundUrl(request, searchParams.get("bg"));
 
   return new ImageResponse(
     React.createElement(
@@ -53,17 +111,36 @@ export function GET(request: Request) {
           height: "675px",
           display: "flex",
           position: "relative",
-          background: "linear-gradient(135deg, #020403 0%, #050505 58%, #041f1a 100%)",
+          overflow: "hidden",
+          background: "#020403",
           color: "white",
           fontFamily: "Arial, Helvetica, sans-serif",
           padding: "58px 76px",
         },
       },
+      React.createElement("img", {
+        src: backgroundUrl,
+        style: {
+          position: "absolute",
+          inset: 0,
+          width: "1200px",
+          height: "675px",
+          objectFit: "cover",
+          opacity: 0.72,
+        },
+      }),
       React.createElement("div", {
         style: {
           position: "absolute",
           inset: 0,
-          opacity: 0.34,
+          background: "linear-gradient(90deg, rgba(2,4,3,0.92) 0%, rgba(2,4,3,0.72) 44%, rgba(2,4,3,0.46) 100%)",
+        },
+      }),
+      React.createElement("div", {
+        style: {
+          position: "absolute",
+          inset: 0,
+          opacity: 0.24,
           backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.28) 1px, transparent 1.6px)",
           backgroundSize: "18px 18px",
           maskImage: "linear-gradient(90deg, transparent 0%, black 16%, black 84%, transparent 100%)",
@@ -91,8 +168,9 @@ export function GET(request: Request) {
             flexDirection: "column",
             border: "2px solid rgba(255,255,255,0.14)",
             borderRadius: "24px",
-            background: "rgba(21,22,27,0.96)",
+            background: "rgba(9,10,15,0.84)",
             padding: "46px 36px",
+            boxShadow: "0 30px 90px rgba(0,0,0,0.42)",
           },
         },
         React.createElement(

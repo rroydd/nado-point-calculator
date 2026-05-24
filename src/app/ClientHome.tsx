@@ -19,6 +19,7 @@ const MAX_FDV_MILLIONS = 100_000;
 const MAX_FARM_COST_USD = 100_000_000;
 const MAX_NFT_MULTIPLIER = 5;
 const MAX_AVG_DAILY_VOLUME_USD = 5_000_000_000;
+const SHARE_BACKGROUND_COUNT = 48;
 
 const REFERRAL_LINK = "https://app.nado.xyz?join=oIxX08E";
 const PUBLIC_SITE_URL = "https://nado-point-calculator.vercel.app/";
@@ -98,6 +99,10 @@ function formatCountdown(targetIso: string) {
 
 function formatBps(value: number | null) {
   return value === null ? "n/a" : `${value.toFixed(value >= 1 ? 1 : 2)} bps`;
+}
+
+function randomShareBackground() {
+  return Math.floor(Math.random() * SHARE_BACKGROUND_COUNT);
 }
 
 function AnimatedCodeBackground() {
@@ -359,19 +364,25 @@ Estimated value: ${usd.format(result.estimatedAirdropUsd)}
 Estimated tokens: ${preciseNumber.format(result.estimatedTokens)} $INK
 Calculate yours: ${REFERRAL_LINK}`;
 
-  const shareParams = new URLSearchParams({
-    amount: usd.format(result.estimatedAirdropUsd),
-    points: `${numberWithCommas.format(result.effectivePoints)} points`,
-    tokens: `${compactNumber.format(result.estimatedTokens)} $INK`,
-    nft: nftEnabled ? nftScenario : "No Templar",
-  });
-  const publicShareUrl = new URL(PUBLIC_SITE_URL);
-  publicShareUrl.search = shareParams.toString();
-
   const shareText = `My estimated Nado airdrop: ${usd.format(result.estimatedAirdropUsd)}
 
 ${numberWithCommas.format(result.effectivePoints)} effective points | calculated with Nado Point Calculator`;
-  const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(publicShareUrl.toString())}`;
+
+  function buildShareParams(backgroundIndex: number) {
+    return new URLSearchParams({
+      amount: usd.format(result.estimatedAirdropUsd),
+      points: `${numberWithCommas.format(result.effectivePoints)} points`,
+      tokens: `${compactNumber.format(result.estimatedTokens)} $INK`,
+      nft: nftEnabled ? nftScenario : "No Templar",
+      bg: String(backgroundIndex),
+    });
+  }
+
+  function buildPublicShareUrl(backgroundIndex: number) {
+    const publicShareUrl = new URL(PUBLIC_SITE_URL);
+    publicShareUrl.search = buildShareParams(backgroundIndex).toString();
+    return publicShareUrl;
+  }
 
   async function copyResult() {
     try {
@@ -387,7 +398,7 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
   async function copyResultImage() {
     try {
       const imageUrl = new URL("/share-image", window.location.origin);
-      imageUrl.search = shareParams.toString();
+      imageUrl.search = buildShareParams(randomShareBackground()).toString();
       const response = await fetch(imageUrl.toString(), { cache: "no-store" });
       if (!response.ok) {
         throw new Error("Image request failed");
@@ -424,6 +435,11 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
       setImageStatus("Copy failed");
       window.setTimeout(() => setImageStatus("Copy Image"), 1800);
     }
+  }
+
+  function shareOnX() {
+    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(buildPublicShareUrl(randomShareBackground()).toString())}`;
+    window.open(shareUrl, "_blank", "noopener,noreferrer");
   }
 
   async function checkAddress() {
@@ -730,9 +746,9 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
                 <button className="rounded-md bg-white px-4 py-3 text-sm font-bold text-black transition hover:bg-emerald-100" type="button" onClick={copyResult}>
                   {copyStatus}
                 </button>
-                <a className="rounded-md border border-white/10 bg-white/[0.04] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-white/10" href={shareUrl} target="_blank" rel="noopener noreferrer">
+                <button className="rounded-md border border-white/10 bg-white/[0.04] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-white/10" type="button" onClick={shareOnX}>
                   Share on X
-                </a>
+                </button>
                 <button className="rounded-md border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-bold text-white transition hover:bg-white/10" type="button" onClick={copyResultImage}>
                   {imageStatus}
                 </button>
