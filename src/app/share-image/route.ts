@@ -122,7 +122,8 @@ export function GET(request: Request) {
         src: backgroundUrl,
         style: {
           position: "absolute",
-          inset: 0,
+          left: "0px",
+          top: "0px",
           width: "1200px",
           height: "675px",
           objectFit: "cover",
@@ -132,14 +133,20 @@ export function GET(request: Request) {
       React.createElement("div", {
         style: {
           position: "absolute",
-          inset: 0,
+          left: "0px",
+          top: "0px",
+          width: "1200px",
+          height: "675px",
           background: "linear-gradient(90deg, rgba(2,4,3,0.92) 0%, rgba(2,4,3,0.72) 44%, rgba(2,4,3,0.46) 100%)",
         },
       }),
       React.createElement("div", {
         style: {
           position: "absolute",
-          inset: 0,
+          left: "0px",
+          top: "0px",
+          width: "1200px",
+          height: "675px",
           opacity: 0.24,
           backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.28) 1px, transparent 1.6px)",
           backgroundSize: "18px 18px",
