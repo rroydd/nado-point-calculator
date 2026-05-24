@@ -254,7 +254,7 @@ function ReferralCta() {
           <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-black/70">
             Create an account through this referral link{" "}
             <span className="rounded bg-black/15 px-2 py-1 font-black text-emerald-950 ring-1 ring-black/10">
-              to access your Rebate Rate
+              to access your future Bonuses
             </span>
             , then trade spot or perps and track points from trading activity, NLP, and referrals.
           </p>
