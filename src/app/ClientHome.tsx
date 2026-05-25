@@ -20,6 +20,7 @@ const MAX_FARM_COST_USD = 100_000_000;
 const MAX_NFT_MULTIPLIER = 5;
 const MAX_AVG_DAILY_VOLUME_USD = 5_000_000_000;
 const SHARE_BACKGROUND_COUNT = 48;
+const POLYMARKET_REFRESH_MS = 5 * 60 * 1000;
 
 const PORTAL_URL = process.env.NEXT_PUBLIC_PORTAL_URL || "https://alpha-tools-tau.vercel.app/";
 const REFERRAL_LINK = "https://app.nado.xyz?join=oIxX08E";
@@ -45,6 +46,73 @@ const nftScenarios = [
 ] as const;
 
 type NftScenario = (typeof nftScenarios)[number]["label"];
+type PolymarketOutcome = {
+  id: string;
+  label: string;
+  yesProbabilityPercent: number | null;
+  status: "open" | "closed" | "unknown";
+};
+
+type PolymarketEvent = {
+  id: string;
+  title: string;
+  slug: string;
+  href: string;
+  volumeUsd: number | null;
+  endsAt: string | null;
+  status: "open" | "closed" | "unknown";
+  outcomes: PolymarketOutcome[];
+};
+
+type PolymarketEventsResponse = {
+  events: PolymarketEvent[];
+  updatedAt: string;
+  source: "live" | "fallback";
+};
+
+const fallbackPolymarketEvents: PolymarketEvent[] = [
+  {
+    id: "will-ink-launch-a-token-by",
+    title: "Will Ink launch a token by ___?",
+    slug: "will-ink-launch-a-token-by",
+    href: "https://polymarket.com/event/will-ink-launch-a-token-by?r=brelgino",
+    volumeUsd: null,
+    endsAt: null,
+    status: "unknown",
+    outcomes: [],
+  },
+  {
+    id: "ink-fdv-above-one-day-after-launch",
+    title: "Ink FDV above ___ one day after launch?",
+    slug: "ink-fdv-above-one-day-after-launch",
+    href: "https://polymarket.com/event/ink-fdv-above-one-day-after-launch?r=brelgino",
+    volumeUsd: null,
+    endsAt: null,
+    status: "unknown",
+    outcomes: [],
+  },
+  {
+    id: "kraken-ipo-closing-market-cap-above",
+    title: "Kraken IPO closing market cap above ___ ?",
+    slug: "kraken-ipo-closing-market-cap-above",
+    href: "https://polymarket.com/event/kraken-ipo-closing-market-cap-above?r=brelgino",
+    volumeUsd: null,
+    endsAt: null,
+    status: "unknown",
+    outcomes: [],
+  },
+  {
+    id: "kraken-ipo-in-2025",
+    title: "Kraken IPO by ___ ?",
+    slug: "kraken-ipo-in-2025",
+    href: "https://polymarket.com/event/kraken-ipo-in-2025?r=brelgino",
+    volumeUsd: null,
+    endsAt: null,
+    status: "unknown",
+    outcomes: [],
+  },
+];
+
 type AddressCheckResult = {
   address: string;
   points: number | null;
@@ -268,6 +336,129 @@ function ReferralCta() {
           Create your account
         </a>
       </div>
+    </section>
+  );
+}
+
+function PolymarketEventsPanel() {
+  const [events, setEvents] = useState<PolymarketEvent[]>(fallbackPolymarketEvents);
+  const [feedStatus, setFeedStatus] = useState<"loading" | "live" | "fallback">("loading");
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(true);
+  const oddsFormatter = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadEvents() {
+      try {
+        const response = await fetch("/api/polymarket-events", { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("Polymarket events unavailable");
+        }
+
+        const data = (await response.json()) as PolymarketEventsResponse;
+        if (!active) {
+          return;
+        }
+
+        setEvents(data.events.length > 0 ? data.events : fallbackPolymarketEvents);
+        setLastUpdatedAt(data.updatedAt);
+        setFeedStatus(data.source);
+      } catch {
+        if (active) {
+          setFeedStatus("fallback");
+        }
+      }
+    }
+
+    void loadEvents();
+    const interval = window.setInterval(() => void loadEvents(), POLYMARKET_REFRESH_MS);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  const updateText =
+    feedStatus === "live" && lastUpdatedAt
+      ? `Live API - updated ${new Date(lastUpdatedAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`
+      : feedStatus === "loading"
+        ? "Connecting to Polymarket..."
+        : "Pinned market links available";
+
+  return (
+    <section className="rounded-lg border border-white/10 bg-[#15161b]/90 shadow-xl shadow-black/20 lg:col-span-2">
+      <div className="flex items-center justify-between gap-4 p-4">
+        <div>
+          <p className="border-b border-dashed border-zinc-600 pb-1 text-xs font-semibold uppercase text-emerald-300">Polymarket</p>
+          <h2 className="mt-3 text-2xl font-semibold leading-tight text-white">Nado / Ink / Kraken events</h2>
+          <p className="mt-2 text-xs font-medium text-zinc-500">{updateText}</p>
+        </div>
+        <button
+          className={`h-8 w-14 shrink-0 rounded-full p-1 transition ${isOpen ? "bg-emerald-300" : "bg-zinc-700"}`}
+          type="button"
+          aria-label="Toggle Polymarket events"
+          aria-pressed={isOpen}
+          onClick={() => setIsOpen((open) => !open)}
+        >
+          <span className={`block h-6 w-6 rounded-full bg-black transition ${isOpen ? "translate-x-6" : "translate-x-0"}`} />
+        </button>
+      </div>
+
+      {isOpen ? (
+        <div className="grid gap-3 border-t border-white/10 p-4">
+          {events.map((event) => (
+            <a
+              className="rounded-md border border-white/10 bg-black/25 p-4 transition hover:border-emerald-300/35 hover:bg-white/[0.05]"
+              href={event.href}
+              key={event.id}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-2.5 py-1 text-xs font-semibold uppercase text-emerald-200">
+                  {event.status === "open" ? "Open" : event.status === "closed" ? "Closed" : "Market"}
+                </span>
+                <span className="text-xs font-semibold text-emerald-300">Open on Polymarket &gt;</span>
+              </div>
+              <p className="mt-3 text-base font-semibold text-white">{event.title}</p>
+              {event.outcomes.length > 0 ? (
+                <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                  {event.outcomes.map((outcome) => (
+                    <div className="flex items-center justify-between gap-3 rounded-md bg-white/[0.04] px-3 py-2.5" key={outcome.id}>
+                      <span className="text-xs font-medium text-zinc-300">{outcome.label}</span>
+                      <span className="whitespace-nowrap text-sm font-semibold text-emerald-300">
+                        {outcome.yesProbabilityPercent === null
+                          ? "Odds unavailable"
+                          : `${oddsFormatter.format(outcome.yesProbabilityPercent)}% Yes`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-xs font-medium text-zinc-500">Live outcomes unavailable; open the market for current odds.</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs font-medium text-zinc-500">
+                {event.volumeUsd === null ? null : <span>Volume: {usdCompact.format(event.volumeUsd)}</span>}
+                {event.endsAt ? (
+                  <span>
+                    Ends:{" "}
+                    {new Date(event.endsAt).toLocaleDateString("en-US", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </span>
+                ) : null}
+              </div>
+            </a>
+          ))}
+          <p className="text-xs font-medium leading-5 text-zinc-500">
+            Related Nado, Ink, Inkchain, and Kraken events are checked automatically every 5 minutes while this page is open.
+          </p>
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -751,8 +942,7 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
         </section>
 
         <section className="mt-6 grid gap-4 lg:grid-cols-3">
-          <MetricCard label="Dynamic Pool" value={`${compactNumber.format(MIN_WEEKLY_POINTS_POOL)}-${compactNumber.format(MAX_WEEKLY_POINTS_POOL)}`} helper="based on 7D average daily volume" />
-          <MetricCard label="Points Sources" value="Trading / NLP / Referrals" helper="from official docs" />
+          <PolymarketEventsPanel />
           <a
             className="nado-referral-glow group flex min-h-32 cursor-pointer flex-col justify-between gap-4 overflow-hidden rounded-lg border border-emerald-200/35 bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-200 p-4 text-black shadow-xl shadow-emerald-950/30 transition hover:-translate-y-0.5 hover:shadow-emerald-700/30 focus:outline-none focus:ring-2 focus:ring-emerald-200 sm:flex-row sm:items-center"
             href={REFERRAL_LINK}
