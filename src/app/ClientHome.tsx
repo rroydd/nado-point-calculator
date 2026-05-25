@@ -388,7 +388,7 @@ function PolymarketEventsPanel() {
         : "Pinned market links available";
 
   return (
-    <section className="rounded-lg border border-white/10 bg-[#15161b]/90 shadow-xl shadow-black/20 lg:col-span-2">
+    <section className="rounded-lg border border-white/10 bg-[#15161b]/90 shadow-xl shadow-black/20">
       <div className="flex items-center justify-between gap-4 p-4">
         <div>
           <p className="border-b border-dashed border-zinc-600 pb-1 text-xs font-semibold uppercase text-emerald-300">Polymarket</p>
@@ -407,7 +407,7 @@ function PolymarketEventsPanel() {
       </div>
 
       {isOpen ? (
-        <div className="grid gap-3 border-t border-white/10 p-4">
+        <div className="grid gap-3 border-t border-white/10 p-4 lg:grid-cols-2">
           {events.map((event) => (
             <a
               className="rounded-md border border-white/10 bg-black/25 p-4 transition hover:border-emerald-300/35 hover:bg-white/[0.05]"
@@ -454,7 +454,7 @@ function PolymarketEventsPanel() {
               </div>
             </a>
           ))}
-          <p className="text-xs font-medium leading-5 text-zinc-500">
+          <p className="text-xs font-medium leading-5 text-zinc-500 lg:col-span-2">
             Related Nado, Ink, Inkchain, and Kraken events are checked automatically every 5 minutes while this page is open.
           </p>
         </div>
@@ -941,7 +941,7 @@ ${numberWithCommas.format(result.effectivePoints)} effective points | calculated
           </div>
         </section>
 
-        <section className="mt-6 grid gap-4 lg:grid-cols-3">
+        <section className="mt-6 grid gap-4">
           <PolymarketEventsPanel />
           <a
             className="nado-referral-glow group flex min-h-32 cursor-pointer flex-col justify-between gap-4 overflow-hidden rounded-lg border border-emerald-200/35 bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-200 p-4 text-black shadow-xl shadow-emerald-950/30 transition hover:-translate-y-0.5 hover:shadow-emerald-700/30 focus:outline-none focus:ring-2 focus:ring-emerald-200 sm:flex-row sm:items-center"
