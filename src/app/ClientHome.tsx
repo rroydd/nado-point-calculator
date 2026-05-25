@@ -556,7 +556,7 @@ Estimated value: ${usd.format(result.estimatedAirdropUsd)}
 Estimated tokens: ${preciseNumber.format(result.estimatedTokens)} $INK
 Calculate yours: ${REFERRAL_LINK}`;
 
-  const shareText = `My estimated Nado points value: ${usd.format(result.estimatedAirdropUsd)}
+  const shareText = `My estimated @nadoHQ points value: ${usd.format(result.estimatedAirdropUsd)}
 
 ${numberWithCommas.format(result.effectivePoints)} effective points | calculated with Nado Point Calculator`;
 
